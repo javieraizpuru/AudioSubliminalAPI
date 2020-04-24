@@ -31,7 +31,7 @@ const myRecorder = AudioRecorder.create("#myRecorderContainer");
 
 ## Recording Audio and getting Data
 
-You have to define the getRecordingData function to retrieve the audio data and the json waveform. The audio data is retreived as a Blob and the json as a string.
+You have to define the getRecordingData function to retrieve the audio data and the json waveform. The audio data is retreived as a Blob and the json as a string. The audio blob can be stored as a .WAV file. 
 
 ``` 
 myRecorder.getRecordingData = (blob, json) => {
@@ -96,14 +96,15 @@ const myPlayer = AudioPlayer.create("#myPlayerContainer")
   .playhead('gray')                         //Playhead color (the line that moves while playing)
   .height(3)                                //Height multipler
   .background('#111')                       //Background color 
-  .meter('#playerMeter', '#00e600');        //Enable meter, first option is the meter container, second is the meter color.
+  .meter('#playerMeter', '#00e600', '#111'); //Enable meter, first option is the meter container, second is the meter color and third is the background color
 
 const myRecorder = AudioRecorder.create("#myRecorderContainer")
   .type('bar')
   .fill('#00e600')
   .playhead('white')
   .background('#111')
-  .meter('#recMeter', '#00e600');
+  .meter('#recMeter', '#00e600', #111);
   ```
+
 
 
