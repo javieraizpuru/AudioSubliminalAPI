@@ -1,11 +1,10 @@
 class AudioPlayer {
 
-  static create(container, mode) {
-    return new AudioPlayer(container, mode);
+  static create(container) {
+    return new AudioPlayer(container);
   }
 
-
-  constructor(container, mode) {
+  constructor(container) {
     this._sleep = false;
     this._sleepStarted = false;
 
@@ -15,8 +14,9 @@ class AudioPlayer {
         .style('overflow-y', 'hidden');
       this._analyserContainer = d3.select(document.createElement('div'));
       this._multiplier = 1;
-      this._width = this._container.node().offsetWidth;
-      this._height = this._container.node().offsetHeight;
+      this._width = this._container.node().offsetWidth
+      this._height = this._container.node().offsetHeight
+
       this._background = 'white';
       this._color = 'rgb(153, 153, 153)';
       this._secondaryColor = 'black';
@@ -29,8 +29,8 @@ class AudioPlayer {
       this._altAudioElement = d3.select(document.createElement("audio"));
 
       this._mainWaveform = d3.select(document.createElement('div'))
-        .style('height', this._height + 'px')
-        .style('width', this._width + 'px')
+        .style('height', '100%')
+        .style('width', '100%')
         .style('position', 'absolute')
         .style('overflow-x', 'hidden')
         .style('overflow-y', 'hidden');
@@ -42,7 +42,7 @@ class AudioPlayer {
       this._container.append(() => this._mainWaveform.node());
 
       this._secondaryWaveform = d3.select(document.createElement('div'))
-        .style('height', this._height + 'px')
+        .style('height', '100%')
         .style('width', '0px')
         .style('position', 'absolute')
         .style('border-right', '1px solid #111')
@@ -151,8 +151,8 @@ class AudioPlayer {
 
       const _drawWaveform = (buffer, isSecondary) => {
 
-        let fill = this._color;
-        let wave = this._mainWaveform;
+        let fill = isSecondary ? this._secondaryColor : this._color;
+        let wave = isSecondary ? this._secondaryWaveform : this._mainWaveform;
 
         const _drawCanvas = (canvas) => {
 
@@ -236,18 +236,12 @@ class AudioPlayer {
 
     }
 
-    const _getWaveform = (buffer) => {
-
-      let vals = [];
-      let lBuffer = _dataFilter(buffer.getChannelData(0), 1920, true);
-      let rBuffer = _dataFilter(buffer.getChannelData(1), 1920, true);
-      vals.push(lBuffer);
-      vals.push(rBuffer);
-
-      let json = JSON.stringify(vals);
-
-      return json;
-
+    const _reloadWaveform = () => {
+      this._mainWaveform.selectAll('canvas').remove();
+      this._secondaryWaveform.selectAll('canvas').remove();
+      this._height = this._container.node().offsetHeight
+      this._width = this._container.node().offsetWidth
+      _createWaveform(this._waveform);
     }
 
     const _stopPlayhead = () => {
@@ -363,6 +357,8 @@ class AudioPlayer {
       this._audioElement.node().loop = true;
       this._mainWaveform.selectAll('canvas').remove();
       this._secondaryWaveform.selectAll('canvas').remove();
+      this._waveform = json;
+      window.addEventListener('resize', _reloadWaveform);
 
       _createWaveform(json);
     }
@@ -476,7 +472,7 @@ class AudioPlayer {
       return this;
     }
 
-    this.meter = (container, fill) => {
+    this.meter = (container, fill, background) => {
       let cont = d3.select(container);
 
       this._meter = cont.append('canvas')
@@ -488,7 +484,7 @@ class AudioPlayer {
 
       const width = parseInt(this._meter.attr('width'));
       const height = parseInt(this._meter.attr('height'));
-      context.fillStyle = this._background;
+      context.fillStyle = background;
       context.rect(0, 0, width, height);
       context.fill();
 
@@ -506,16 +502,19 @@ class AudioPlayer {
     }
 
     this.getOutputNode = () => {
-      _isReady(() => {
-        return this._output;
-      })
+      if (this._output == null) {
+        _isReady();
+      }
+      return this._output;
     }
 
     this.getContext = () => {
-      _isReady(() => {
-        return this._ctx;
-      })
+      if (this._ctx == null) {
+        _isReady();
+      }
+      return this._ctx;
     }
+
 
     this.isPlaying = () => {
       return this._isPlaying;
@@ -535,12 +534,12 @@ class AudioPlayer {
 }
 
 class AudioRecorder {
-  static create(container, mode) {
-    return new AudioRecorder(container, mode);
+  static create(container) {
+    return new AudioRecorder(container);
   }
 
 
-  constructor(container, mode) {
+  constructor(container) {
 
     const _prepareCanvas = c => {
 
@@ -594,13 +593,15 @@ class AudioRecorder {
       this._secondaryWaveform.style('width', position + 'px');
     }
 
+
+
     const _dataFilter = (data, pixels, saveMode = false) => {
 
-      var pixelLength = Math.round(data.length / pixels);
+      const pixelLength = Math.round(data.length / pixels);
 
       var vals = [];
 
-      var sampleSize = pixelLength;
+      const sampleSize = pixelLength;
 
       // For each pixel we display
       for (var i = 0; i < pixels; i++) {
@@ -728,11 +729,25 @@ class AudioRecorder {
       _drawWaveform(url, false);
     }
 
+    const _normalizeData = buffer => {
+      let data = buffer;
+      let max = Math.max.apply(null, data);
+      data.forEach((item, i) => {
+        if (item != 0) {
+          data[i] = item / max;
+        }
+      });
+      return data;
+    }
+
+
+
     const _getWaveform = (buffer) => {
 
       let vals = [];
-      let lBuffer = _dataFilter(buffer.getChannelData(0), 1920, true);
-      let rBuffer = _dataFilter(buffer.getChannelData(1), 1920, true);
+
+      const lBuffer = _dataFilter(_normalizeData(buffer.getChannelData(0)), 1920, true);
+      const rBuffer = _dataFilter(_normalizeData(buffer.getChannelData(1)), 1920, true);
       vals.push(lBuffer);
       vals.push(rBuffer);
 
@@ -746,14 +761,16 @@ class AudioRecorder {
 
       let notRecording = true;
 
-      if (this._mediaRecorder != null && this._mediaRecorder.state == 'recording') {
+      if (this._mediaRecorder != null && this._mediaRecorder.isRecording()) {
         this._mainWaveform.style('overflow-x', 'scroll');
+
+
+
+        this._mediaRecorder.finishRecording();
 
         this._stream.getTracks().forEach((i) => {
           i.stop();
         });
-
-        this._mediaRecorder.stop();
 
         this._data = [];
 
@@ -784,11 +801,12 @@ class AudioRecorder {
           Tone.context = this._ctx;
           this._mainWaveform.style('overflow-x', 'hidden');
           this._stream = stream;
+
           const source = this._ctx.createMediaStreamSource(stream);
 
-          const destinationStream = this._ctx.createMediaStreamDestination();
+          // const destinationStream = this._ctx.createMediaStreamDestination();
 
-          const merger = this._ctx.createChannelMerger(2);
+          this.merger = this._ctx.createChannelMerger(2);
 
           let analyser = this._ctx.createAnalyser();
 
@@ -807,18 +825,25 @@ class AudioRecorder {
 
           modulator.connect(hpf);
 
-          hpf.connect(merger, 0, 1);
+          hpf.connect(this.merger, 0, 1);
 
-          source.connect(merger, 0, 0);
+          source.connect(this.merger, 0, 0);
 
-          merger.connect(destinationStream);
+          // merger.connect(destinationStream);
 
           source.connect(analyser);
 
-          this._mediaRecorder = new MediaRecorder(destinationStream.stream);
+          this._mediaRecorder = new WebAudioRecorder(this.merger, {
+            workerDir: this._libraryPath,
+            encoding: "wav",
+          });
+
+          // this._mediaRecorder = new MediaRecorder(destinationStream.stream);
 
           modulator.start();
-          this._mediaRecorder.start();
+          // this._mediaRecorder.start();
+
+          this._mediaRecorder.startRecording();
           analyser.fftSize = 2048;
 
           let bufferLength = analyser.frequencyBinCount;
@@ -834,7 +859,7 @@ class AudioRecorder {
 
             analyser.getFloatTimeDomainData(dataArray);
 
-            if (this._mediaRecorder.state == 'recording') {
+            if (this._mediaRecorder.isRecording()) {
 
               let currentTime = new Date();
 
@@ -858,7 +883,7 @@ class AudioRecorder {
             let normalized;
             let db;
 
-            if (this._mediaRecorder.state == 'recording') {
+            if (this._mediaRecorder.isRecording()) {
 
               let sum = 0;
               dataArray.forEach((item, i) => {
@@ -902,15 +927,17 @@ class AudioRecorder {
 
           }
 
-          this._mediaRecorder.ondataavailable = (e) => {
 
-            let json = e.data.arrayBuffer().then(buffer => {
+          this._mediaRecorder.onComplete = (rec, e) => {
+
+            let json = e.arrayBuffer().then(buffer => {
               this._ctx.decodeAudioData(buffer)
                 .then(data => {
-                  this.getRecordingData(e.data, _getWaveform(data));
+
+
+                  this.getRecordingData(e, _getWaveform(data));
                 });
             });
-
           };
 
           draw();
@@ -1001,7 +1028,7 @@ class AudioRecorder {
       return this;
     }
 
-    this.meter = (container, fill) => {
+    this.meter = (container, fill, background) => {
       let cont = d3.select(container);
 
       this._meter = cont.append('canvas')
@@ -1013,7 +1040,7 @@ class AudioRecorder {
 
       const width = parseInt(this._meter.attr('width'));
       const height = parseInt(this._meter.attr('height'));
-      context.fillStyle = this._background;
+      context.fillStyle = background;
       context.rect(0, 0, width, height);
       context.fill();
 
@@ -1021,6 +1048,11 @@ class AudioRecorder {
 
       this._meterEnabled = true;
 
+      return this;
+    }
+
+    this.libraryPath = (path) => {
+      this._libraryPath = path;
       return this;
     }
 
