@@ -55,11 +55,11 @@ If you use the record() function while recording it will stop the recording and 
 
 Load an audio and JSON waveform:
 
-`myPlayer.load('/path/to/my/audio.ogg', myJsonStringWaveform);`
+`myPlayer.load('/path/to/my/audio.wav', myJsonStringWaveform);`
 
 Load an audio file for the background music
 
-`myPlayer.alt.load('/path/to/my/MyBackgroundMusic.ogg');`
+`myPlayer.alt.load('/path/to/my/MyBackgroundMusic.wav');`
 
 Play / Stop / PlayStop 
 
