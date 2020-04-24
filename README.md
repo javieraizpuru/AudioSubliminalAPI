@@ -1,10 +1,13 @@
 # AudioSubliminalAPI
 
 ## Installation
-The AudioSubliminalApi used D3.js and Tone.js as depedencies:
+The AudioSubliminalApi used D3.js, Tone.js and web-audio-recorder-js as depedencies:
 
 https://github.com/d3/d3
-and https://github.com/Tonejs/Tone.js
+
+https://github.com/Tonejs/Tone.js
+
+https://github.com/higuma/web-audio-recorder-js
 
 After adding this libraries you can add the AudioSubliminalAPI at the end of the body element.
 
@@ -19,9 +22,9 @@ It will also create a JSON string that contains the audio waveform data.
 
 The audio player can decode this audio file and play the original audio or the subliminal. It will use the JSON waveform data to draw the audio waveform.
 
-## Creating audio Player / Recorder:
+## Creating audio player/recorder:
 
-This will create an audio player / recorder canvas inside the #myContainer element with the default settings.
+This will create an audio player canvas inside the #myContainer element with the default settings.
 
 ``` 
 const myPlayer = AudioPlayer.create("#myPlayerContainer");
@@ -29,7 +32,11 @@ const myPlayer = AudioPlayer.create("#myPlayerContainer");
 const myRecorder = AudioRecorder.create("#myRecorderContainer");
 ```
 
-## Recording Audio and getting Data
+For the recorder you also have to specify the path to the folder where the web-audio-recorder-js library is located
+
+```myRecorder.libraryPath('js/lib/');```
+
+## Recording audio and getting data
 
 You have to define the getRecordingData function to retrieve the audio data and the json waveform. The audio data is retreived as a Blob and the json as a string. The audio blob can be stored as a .WAV file. 
 
@@ -106,5 +113,20 @@ const myRecorder = AudioRecorder.create("#myRecorderContainer")
   .meter('#recMeter', '#00e600', #111);
   ```
 
+# Connecting to AudioMotionAnalyzer lib
+
+To connect it to the AudioMotionAnalyzer lib to an audio player you just have to use the audio context from the AudioSubliminalAPI in the AudioMotionAnalyzer constructor. The AudioSubliminalAPI creates the audio context after the first time it loads a file. So you have to first load an audio file to get the audio context. After loading a file for the first time you can connect the audio player node to the analyser. 
+
+```
+const ctx = myPlayer.getContext();
+const container = document.getElementById("#analyser");
+    
+const motionAnalyser = new AudioMotionAnalyzer(container , {
+  audioCtx: ctx
+  });
+
+myPlayer.getOutputNode().connect(motionAnalyser.analyzer);
+
+```
 
 
