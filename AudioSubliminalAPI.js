@@ -578,7 +578,6 @@ class AudioRecorder {
       this._isPlaying = false;
     }
 
-
     const _getPixelPosition = (position) => {
       this._duration = this._audioElement.node().duration;
       return position * this._duration / this._width;
@@ -592,8 +591,6 @@ class AudioRecorder {
 
       this._secondaryWaveform.style('width', position + 'px');
     }
-
-
 
     const _dataFilter = (data, pixels, saveMode = false) => {
 
@@ -731,7 +728,23 @@ class AudioRecorder {
 
     const _normalizeData = buffer => {
       let data = buffer;
-      let max = Math.max.apply(null, data);
+
+      //Getting max value from array
+      // let max = Math.max.apply(null, data);
+
+      const getMax = (d) => {
+        let maxValue = Number.MIN_VALUE;
+
+        d.forEach((item, i) => {
+          maxValue = (item > maxValue) ? item : maxValue;
+        });
+
+        return maxValue;
+      }
+
+      const max = getMax(data);
+
+      //Normalize using max as reference
       data.forEach((item, i) => {
         if (item != 0) {
           data[i] = item / max;
@@ -739,8 +752,6 @@ class AudioRecorder {
       });
       return data;
     }
-
-
 
     const _getWaveform = (buffer) => {
 
@@ -788,7 +799,7 @@ class AudioRecorder {
 
       return notRecording;
     }
-    //
+
     const _startRecording = () => {
 
       _isReady(() => {
@@ -836,6 +847,9 @@ class AudioRecorder {
           this._mediaRecorder = new WebAudioRecorder(this.merger, {
             workerDir: this._libraryPath,
             encoding: "wav",
+            options: {
+              encodeAfterRecord: true
+            }
           });
 
           // this._mediaRecorder = new MediaRecorder(destinationStream.stream);
@@ -930,14 +944,28 @@ class AudioRecorder {
 
           this._mediaRecorder.onComplete = (rec, e) => {
 
-            let json = e.arrayBuffer().then(buffer => {
+            const process = (buffer) => {
               this._ctx.decodeAudioData(buffer)
                 .then(data => {
-
-
                   this.getRecordingData(e, _getWaveform(data));
                 });
-            });
+            }
+
+            if (typeof e.arrayBuffer === 'function') {
+
+              e.arrayBuffer().then(buffer => process(buffer));
+
+            } else {
+
+              const blobReader = new FileReader();
+              blobReader.onload = (e) => {
+                const buffer = e.target.result;
+                process(buffer);
+              }
+
+              blobReader.readAsArrayBuffer(e);
+
+            }
           };
 
           draw();
@@ -1063,11 +1091,14 @@ class AudioRecorder {
       return this._recordingTime;
     }
 
-    //Preparing data
-
     _prepareCanvas(container);
 
     return this;
   }
 
 }
+
+export {
+  AudioPlayer,
+  AudioRecorder
+};
