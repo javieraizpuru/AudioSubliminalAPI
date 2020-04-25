@@ -9,9 +9,31 @@ https://github.com/Tonejs/Tone.js
 
 https://github.com/higuma/web-audio-recorder-js
 
-After adding this libraries you can add the AudioSubliminalAPI at the end of the body element.
+After adding this libraries you can add the AudioSubliminalAPI at the start of your script using the import statement.
 
-`<script src="AudioSubliminalAPI.js"></script>`
+Import both the AudioPlayer and the Audio Recorder: 
+```
+import {
+  AudioPlayer,
+  AudioRecorder
+} from 'AudioSubliminalAPI.js'
+```
+
+Import only the AudioPlayer:
+
+```
+import {
+  AudioPlayer
+} from 'AudioSubliminalAPI.js'
+```
+
+Import only the AudioRecorder:
+
+```
+import {
+  AudioRecorder
+} from 'AudioSubliminalAPI.js'
+```
 
 ##How it works
 
@@ -114,6 +136,8 @@ const myRecorder = AudioRecorder.create("#myRecorderContainer")
   ```
 
 # Connecting to AudioMotionAnalyzer lib
+
+https://github.com/hvianna/audioMotion-analyzer
 
 To connect it to the AudioMotionAnalyzer lib to an audio player you just have to use the audio context from the AudioSubliminalAPI in the AudioMotionAnalyzer constructor. The AudioSubliminalAPI creates the audio context after the first time it loads a file. So you have to first load an audio file to get the audio context. After loading a file for the first time you can connect the audio player node to the analyser. 
 
