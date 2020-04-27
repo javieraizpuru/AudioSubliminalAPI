@@ -9,9 +9,9 @@ class AudioDevice {
 
     d3.select('head').append(() => hideScrollbar.node());
 
-    this._container = d3.select(container).style('overflow-x', 'scroll')
+    this._container = d3.select(container)
+      .style('overflow-x', 'hidden')
       .style('overflow-y', 'hidden')
-      .classed('hideScrollbar', true);
 
     this._multiplier = 1;
 
@@ -709,10 +709,6 @@ class AudioRecorder extends AudioDevice {
     let notRecording = true;
 
     if (this._mediaRecorder != null && this._mediaRecorder.isRecording()) {
-      this._mainWaveform.style('overflow-x', 'scroll')
-        .classed('hideScrollbar', true);;
-
-
 
       this._mediaRecorder.finishRecording();
 
@@ -747,7 +743,6 @@ class AudioRecorder extends AudioDevice {
         this._recordingTime = 0;
         this._currentTime = new Date();
         Tone.context = this._ctx;
-        this._mainWaveform.style('overflow-x', 'hidden');
         this._stream = stream;
 
         const source = this._ctx.createMediaStreamSource(stream);
