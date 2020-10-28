@@ -1,0 +1,22 @@
+.container {
+  width: 100%;
+  height: 200px;
+}
+#myPlayer, #myRecorder {
+  width: 50%;
+  height: 200px;
+}
+
+#playerMeter, #recorderMeter {
+  width: 20px;
+  height: 200px;
+}
+
+#myAnalyser {
+  width: 20%;
+  height: 200px;
+}
+
+.column {
+  float: left;
+}

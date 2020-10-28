@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Subliminal API</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.min.js"></script>
+  </head>
+  <body>
+
+    <!-- Player -->
+    <h2>Player</h2>
+    <div class="container">
+      <div id='playerMeter' class="column"></div>
+      <div id='myPlayer' class="column"></div>
+      <div id='myAnalyser' class="column"></div>
+    </div>
+
+    <h2>Player Controllers</h2>
+    <!-- Player Controllers -->
+    <div>
+      <button id="playButton">Play</button>
+      <button id="toggleSubliminal">Listen subliminal</button>
+      <input type="range" min="0" max="1" value="0.8" step="0.01">
+    </div>
+
+    <h2>Recorder</h2>
+    <!-- Recorder -->
+    <div class="container">
+      <div id="recorderMeter" class="column"></div>
+      <div id="myRecorder" class="column"></div>
+    </div>
+
+    <h2>Recorder Controllers</h2>
+    <!-- Recorder Controllers -->
+    <div>
+      <button id="recordButton">Record</button>
+    </div>
+
+    <!-- Dependencies -->
+    <script src="js/AudioSubliminalAPI/libs/d3.min.js"></script>
+    <script src="js/AudioSubliminalAPI/libs/Tone.js"></script>
+    <script src="js/AudioSubliminalAPI/libs/WebAudioRecorder.min.js"></script>
+    <script type="module" src="js/AudioSubliminalAPI/libs/audioMotion-analyzer.js"></script>
+    <!-- End dependencies -->
+
+    <!-- Adding AudioSubliminalAPI -->
+    <script type="module" src="js/AudioSubliminalAPI/AudioSubliminalAPI.js"></script>
+
+
+    <!-- My javascript code (where we implement the AudioSubliminal API) -->
+    <script type="module" src="js/main.js"></script>
+
+  </body>
+</html>
