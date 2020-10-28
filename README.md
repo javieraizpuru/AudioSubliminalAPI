@@ -3,10 +3,6 @@
 ## Installation
 The AudioSubliminalApi used D3.js, Tone.js and web-audio-recorder-js as depedencies:
 
-https://github.com/d3/d3
-
-https://github.com/Tonejs/Tone.js
-
 https://github.com/higuma/web-audio-recorder-js
 
 After adding this libraries you can add the AudioSubliminalAPI at the start of your script using the import statement.
@@ -51,12 +47,11 @@ This will create an audio player canvas inside the #myContainer element with the
 ``` 
 const myPlayer = AudioPlayer.create("#myPlayerContainer");
 
-const myRecorder = AudioRecorder.create("#myRecorderContainer");
-```
 
 For the recorder you also have to specify the path to the folder where the web-audio-recorder-js library is located
 
-```myRecorder.libraryPath('js/lib/');```
+const myRecorder = AudioRecorder.create("#myRecorderContainer", "js/libs/');
+```
 
 ## Recording audio and getting data
 
@@ -108,7 +103,6 @@ myPlayer.alt.setVolume(1) // setting the volume to the background music
 Listen to subliminal or original recording.
 
 ```
-
 myPlayer.setSubliminal(true) //Listen to subliminal recording
 
 myPlayer.setSubliminal(false) //Listen to originial recording
@@ -121,17 +115,17 @@ You can edit how the recorder/player looks while creating it.
 const myPlayer = AudioPlayer.create("#myPlayerContainer")
   .type('bar')                              //Create waveform using rectangles
   .barWidth(2)                              //rectangles width
-  .fill('white', 'gray')                    // Waveform fill color, the second option is the waveform color after it has being played.
-  .playhead('gray')                         //Playhead color (the line that moves while playing)
+  .waveformColour('white', 'gray')                    // Waveform fill color, the second option is the waveform color after it has being played.
+  .playheadColour('gray')                         //Playhead color (the line that moves while playing)
   .height(3)                                //Height multipler
-  .background('#111')                       //Background color 
+  .backgroundColour('#111')                       //Background color 
   .meter('#playerMeter', '#00e600', '#111'); //Enable meter, first option is the meter container, second is the meter color and third is the background color
 
 const myRecorder = AudioRecorder.create("#myRecorderContainer")
   .type('bar')
-  .fill('#00e600')
-  .playhead('white')
-  .background('#111')
+  .waveformColour('#00e600')
+  .playheadColour('white')
+  .backgroundColour('#111')
   .meter('#recMeter', '#00e600', #111);
   ```
 
@@ -143,7 +137,7 @@ To connect it to the AudioMotionAnalyzer lib to an audio player you just have to
 
 ```
 const ctx = myPlayer.getContext();
-const container = document.getElementById("#analyser");
+const container = document.getElementById("analyser");
     
 const motionAnalyser = new AudioMotionAnalyzer(container , {
   audioCtx: ctx
