@@ -179,10 +179,12 @@ class AudioDevice {
     const width = this._meter.node().offsetWidth;
     const height = this._meter.node().offsetHeight;
 
+
     context.fillStyle = bg;
     context.rect(0, 0, width, height);
     context.fill();
 
+    this._meterBackground = bg;
     this._meterFill = fill;
     this._meterEnabled = true;
 
@@ -547,6 +549,7 @@ class AudioPlayer extends AudioDevice {
   }
 
   playheadColour(color) {
+    this._playheadColour = color;
     this._secondaryWaveform.style('border-right', '1px solid '.concat(this._playheadColour));
     return this;
   }
@@ -893,7 +896,7 @@ class AudioRecorder extends AudioDevice {
             const width = parseInt(this._meter.attr('width'));
             const height = parseInt(this._meter.attr('height'));
 
-            context.fillStyle = this._backgroundColour;
+            context.fillStyle = this._meterBackground;
             context.fillRect(0, 0, width, height);
             context.fillStyle = this._meterFill;
             context.fillRect(0, height * ( 1 - normalized) , width, height * normalized);

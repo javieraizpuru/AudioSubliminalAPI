@@ -11,7 +11,6 @@
     <!-- Player -->
     <h2>Player</h2>
     <div class="container">
-      <div id='playerMeter' class="column"></div>
       <div id='myPlayer' class="column"></div>
       <div id='myAnalyser' class="column"></div>
     </div>
@@ -21,14 +20,21 @@
     <div>
       <button id="playButton">Play</button>
       <button id="toggleSubliminal">Listen subliminal</button>
-      <input type="range" min="0" max="1" value="0.8" step="0.01">
+      <input id="playerVolume" type="range" min="0" max="1" value="0.8" step="0.01">
+    </div>
+
+    <h2> Background music </h2>
+    <!-- Player Controllers -->
+    <div>
+      <button id="bgPlayButton">Play</button>
+      <input id="bgPlayerVolume"type="range" min="0" max="1" value="0.8" step="0.01">
     </div>
 
     <h2>Recorder</h2>
     <!-- Recorder -->
     <div class="container">
       <div id="recorderMeter" class="column"></div>
-      <div id="myRecorder" class="column"></div>
+      <div id="myRecorder" class="column"></div> <!-- Here is our recorder -->
     </div>
 
     <h2>Recorder Controllers</h2>
@@ -36,6 +42,7 @@
     <div>
       <button id="recordButton">Record</button>
     </div>
+
 
     <!-- Dependencies -->
     <script src="js/AudioSubliminalAPI/libs/d3.min.js"></script>
@@ -46,7 +53,6 @@
 
     <!-- Adding AudioSubliminalAPI -->
     <script type="module" src="js/AudioSubliminalAPI/AudioSubliminalAPI.js"></script>
-
 
     <!-- My javascript code (where we implement the AudioSubliminal API) -->
     <script type="module" src="js/main.js"></script>
