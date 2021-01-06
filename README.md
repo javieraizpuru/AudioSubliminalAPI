@@ -1,8 +1,6 @@
 # AudioSubliminalAPI
 ## Installation
-The AudioSubliminalApi used D3.js, Tone.js and web-audio-recorder-js as depedencies:
-
-https://github.com/higuma/web-audio-recorder-js
+The AudioSubliminalApi used D3.js, Tone.js and web-audio-recorder-js as depedencies. (Included inside the lib folder)
 
 After adding this libraries you can add the AudioSubliminalAPI at the start of your script using the import statement.
 
